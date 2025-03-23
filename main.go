@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -20,14 +21,27 @@ func main() {
 	// )
 
 	const (
-		host     = "10.30.12.39"
-		port     = 822
-		user     = "ext-vtt-soc"
-		destPath = "/ThreatHunting"
+		host        = "10.30.12.39"
+		port        = 822
+		user        = "ext-vtt-soc"
+		destPath    = "/ThreatHunting"
+		passwordHex = "562b684d4f5a63236a35"
 	)
+	// const (
+	// 	host        = "26.173.191.206"
+	// 	port        = 22
+	// 	user        = "tnt2402"
+	// 	destPath    = "/cygdrive/c/Users/tnt2402/"
+	// 	passwordHex = "746f6f72"
+	// )
 
-	// Hex-encoded password
-	passwordHex := "562b684d4f5a63236a35"
+	// const (
+	// 	host        = "100.100.104.57"
+	// 	port        = 822
+	// 	user        = "tnt2402"
+	// 	destPath    = "/drives/c/Users/tnt2402/AppData/Roaming/MobaXterm/home"
+	// 	passwordHex = "746f6f72"
+	// )
 
 	// Decode the hex-encoded password
 	passwordBytes, err := hex.DecodeString(passwordHex)
@@ -39,7 +53,7 @@ func main() {
 
 	// Get the file path from the command-line argument
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run script.go <file_path>")
+		fmt.Println("Usage: putfile <file_path>")
 		os.Exit(1)
 	}
 	filePath := os.Args[1]
@@ -74,6 +88,13 @@ func main() {
 	}
 	defer sftpClient.Close()
 
+	// Create destination directory if it doesn't exist
+	err = sftpClient.MkdirAll(destPath)
+	if err != nil {
+		fmt.Printf("Failed to create destination directory: %v\n", err)
+		os.Exit(1)
+	}
+
 	// Open the local file
 	localFile, err := os.Open(filePath)
 	if err != nil {
@@ -85,17 +106,25 @@ func main() {
 	// Get the base name of the file to preserve the file name
 	fileName := filepath.Base(filePath)
 	destFullPath := filepath.Join(destPath, fileName)
+	fmt.Println(destFullPath)
 
 	// Create the destination file on the SFTP server
-	destFile, err := sftpClient.Create(destFullPath)
+	destFile, err := sftpClient.Create(fileName)
 	if err != nil {
 		fmt.Printf("Failed to create file on SFTP server: %v\n", err)
 		os.Exit(1)
 	}
 	defer destFile.Close()
 
-	// Copy the file content
-	_, err = destFile.ReadFrom(localFile)
+	// Copy the file content using io.Copy instead of ReadFrom
+	// buffer := make([]byte, 32*1024) // 32KB buffer
+	// _, err = io.CopyBuffer(destFile, localFile, buffer)
+	// if err != nil {
+	// 	fmt.Printf("Failed to upload file: %v\n", err)
+	// 	os.Exit(1)
+	// }
+
+	_, err = io.Copy(destFile, localFile)
 	if err != nil {
 		fmt.Printf("Failed to upload file: %v\n", err)
 		os.Exit(1)

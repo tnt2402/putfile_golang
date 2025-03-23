@@ -23,7 +23,7 @@ test_build() {
     BUILD=$(date +%FT%T%z)
     CURRENT_DATE=$(date +%Y%m%d_%H%M) 
     # Set the name of the binary to be built
-    BINARY_NAME="VCSShellScanner_${VERSION}_${CURRENT_DATE}"
+    BINARY_NAME="putfile_${VERSION}_${CURRENT_DATE}"
 
     # Set the path to the source code directory
     SOURCE_DIR="./main.go"
@@ -100,7 +100,7 @@ setup() {
     BUILD=$(date +%FT%T%z)
     CURRENT_DATE=$(date +%Y%m%d_%H%M) 
     # Set the name of the binary to be built
-    BINARY_NAME="VCSShellScanner_${VERSION}_${CURRENT_DATE}"
+    BINARY_NAME="putfile_${VERSION}_${CURRENT_DATE}"
 
     # Set the path to the source code directory
     SOURCE_DIR="./main.go"
@@ -130,21 +130,21 @@ setup() {
 
 build() {
 
-    BUILD_OUTPUT_NAME="$BUILD_RELEASE_DIR/VCSShellScanner_{{.OS}}_{{.Arch}}_$CURRENT_DATE"
+    BUILD_OUTPUT_NAME="$BUILD_RELEASE_DIR/putfile_{{.OS}}_{{.Arch}}_$CURRENT_DATE"
 
     # Build binaries for linux
     echo "-> Build linux versions"
     CGO_ENABLED=0 gox -os="linux" -ldflags="$LDFLAGS"  -output=$BUILD_OUTPUT_NAME
 
-    echo "---- Binary VCSWebshellScanner for linux/amd64 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*linux*amd64* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
-    echo "---- Binary VCSWebshellScanner for linux/386 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*linux*386* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
+    echo "---- Binary putfile for linux/amd64 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*linux*amd64* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
+    echo "---- Binary putfile for linux/386 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*linux*386* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
 
     # Build binaries for windows
     echo "-> Build windows versions"
     CGO_ENABLED=0 gox -os="windows" -ldflags="$LDFLAGS"  -output=$BUILD_OUTPUT_NAME
 
-    echo "---- Binary VCSWebshellScanner for windows/amd64 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*windows*amd64* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
-    echo "---- Binary VCSWebshellScanner for windows/386 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*windows*386* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
+    echo "---- Binary putfile for windows/amd64 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*windows*amd64* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
+    echo "---- Binary putfile for windows/386 successfully created: " $(stat -c %s $BUILD_RELEASE_DIR/*windows*386* | awk '{size=$1/1024/1024; printf "%.2fMB\n", size}')
 
 }
 
